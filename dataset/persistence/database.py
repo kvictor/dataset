@@ -92,6 +92,7 @@ class Database(object):
         of tables or columns will not be part of the transactional context."""
         if not hasattr(self.local, 'connection'):
             self.local.connection = self.engine.connect()
+            self.local.connection.detach()
         if not hasattr(self.local, 'tx'):
             self.local.tx = self.local.connection.begin()
 
