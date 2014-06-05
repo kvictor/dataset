@@ -100,6 +100,7 @@ class Database(object):
         since the transaction was begun permanent. """
         self.local.tx.commit()
         del self.local.tx
+        del self.local.connection
         self._release_internal()
 
     def rollback(self):
@@ -107,6 +108,7 @@ class Database(object):
         executed since the transaction was begun. """
         self.local.tx.rollback()
         del self.local.tx
+        del self.local.connection
         self._release_internal()
 
     def __enter__(self):
