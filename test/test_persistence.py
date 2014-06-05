@@ -7,7 +7,7 @@ try:
 except ImportError:
     from ordereddict import OrderedDict  # Python < 2.7 drop-in
 
-from sqlalchemy.exc import IntegrityError, OperationalError
+from sqlalchemy.exc import IntegrityError
 
 from dataset import connect
 from dataset.util import DatasetException
@@ -120,7 +120,7 @@ class DatabaseTestCase(unittest.TestCase):
             with self.db:
                 self.db['weather'].insert({'date': datetime(2011, 1, 1), 'temperature': 1, 'place': u'kuku'})
                 self.db.create_table("weather")
-        except OperationalError:
+        except Exception:
             pass
 
         assert len(self.db['weather']) == init_length
