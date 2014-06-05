@@ -109,6 +109,17 @@ class Database(object):
         del self.local.tx
         self._release_internal()
 
+    def __enter__(self):
+        self.begin()
+        return self
+
+    def __exit__(self, error_type, value, tb):
+        if error_type is None:
+            self.commit()
+            return True
+        else:
+            self.rollback()
+
     @property
     def tables(self):
         """
