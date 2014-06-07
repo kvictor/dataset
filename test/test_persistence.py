@@ -123,6 +123,7 @@ class DatabaseTestCase(unittest.TestCase):
         except Exception:
             pass
         print self.db.executable
+        print hasattr(self.db.local, 'connection')
         assert len(self.db['weather']) == init_length
 
     def test_load_table(self):
