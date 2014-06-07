@@ -18,8 +18,8 @@ from .sample_data import TEST_DATA, TEST_CITY_1
 class DatabaseTestCase(unittest.TestCase):
 
     def setUp(self):
-        os.environ.setdefault('DATABASE_URL', 'sqlite:///:memory:')
-        self.db = connect(os.environ['DATABASE_URL'])
+        os.environ.setdefault('DATABASE_URL', 'mysql+mysqlconnector://travis@127.0.0.1/dataset?charset=utf8')
+        self.db = connect(os.environ['DATABASE_URL'], engine_kwargs={'echo': True, 'echo_pool': True})
         self.tbl = self.db['weather']
         for row in TEST_DATA:
             self.tbl.insert(row)
@@ -122,7 +122,7 @@ class DatabaseTestCase(unittest.TestCase):
                 self.db.create_table("weather")
         except Exception:
             pass
-
+        print self.db.executable
         assert len(self.db['weather']) == init_length
 
     def test_load_table(self):
