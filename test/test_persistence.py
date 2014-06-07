@@ -7,7 +7,7 @@ try:
 except ImportError:
     from ordereddict import OrderedDict  # Python < 2.7 drop-in
 
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, DatabaseError
 
 from dataset import connect
 from dataset.util import DatasetException
@@ -19,7 +19,7 @@ class DatabaseTestCase(unittest.TestCase):
 
     def setUp(self):
         os.environ.setdefault('DATABASE_URL', 'mysql+mysqlconnector://travis@127.0.0.1/dataset?charset=utf8')
-        self.db = connect(os.environ['DATABASE_URL'], engine_kwargs={'echo': True, 'echo_pool': True})
+        self.db = connect(os.environ['DATABASE_URL'])
         self.tbl = self.db['weather']
         for row in TEST_DATA:
             self.tbl.insert(row)
@@ -118,12 +118,11 @@ class DatabaseTestCase(unittest.TestCase):
         init_length = len(self.db['weather'])
         try:
             with self.db:
-                self.db['weather'].insert({'date': datetime(2011, 1, 1), 'temperature': 1, 'place': u'kuku'})
-                self.db.create_table("weather")
-        except Exception:
+                self.db['weather'].insert({'date': datetime(2011, 1, 1), 'temperature': 1, 'place': u'tmp_place'})
+                self.db['weather'].insert({'date': datetime(2011, 1, 2), 'temperature': 'wrong_value', 'place': u'tmp_place'})
+        except DatabaseError:
             pass
-        print self.db.executable
-        print hasattr(self.db.local, 'connection')
+
         assert len(self.db['weather']) == init_length
 
     def test_load_table(self):
